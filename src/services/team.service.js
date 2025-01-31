@@ -1,10 +1,9 @@
-
-import Team from '../models/team.model.js';
-import User from '../models/user.model.js';
-import TeamMember from '../models/teamMember.model.js';
+import Team from "../models/team.model.js";
+import User from "../models/user.model.js";
+import TeamMember from "../models/teamMember.model.js";
 
 class TeamService {
-  async createTeam(name, description) {
+  async createTeam({ name, description }) {
     try {
       const team = await Team.create({ name, description });
       return team;
@@ -15,7 +14,14 @@ class TeamService {
 
   async getTeams() {
     try {
-      const teams = await Team.findAll();
+      const teams = await Team.findAll({
+        include: [
+          {
+            model: User,
+            through: TeamMember,
+          },
+        ],
+      });
       return teams;
     } catch (error) {
       throw error;
@@ -26,7 +32,7 @@ class TeamService {
     try {
       const team = await Team.findByPk(id);
       if (!team) {
-        throw new Error('Team not found');
+        throw new Error("Team not found");
       }
       return team;
     } catch (error) {
@@ -38,7 +44,7 @@ class TeamService {
     try {
       const team = await Team.findByPk(id);
       if (!team) {
-        throw new Error('Team not found');
+        throw new Error("Team not found");
       }
       await team.destroy();
     } catch (error) {
@@ -46,14 +52,18 @@ class TeamService {
     }
   }
 
-  async addMember(teamId, userId, role = 'MEMBER') {
+  async addMember(teamId, userId, role = "MEMBER") {
     try {
       const team = await Team.findByPk(teamId);
       const user = await User.findByPk(userId);
       if (!team || !user) {
-        throw new Error('Team or User not found');
+        throw new Error("Team or User not found");
       }
-      const teamMember = await TeamMember.create({ TeamId: teamId, UserId: userId, role });
+      const teamMember = await TeamMember.create({
+        TeamId: teamId,
+        UserId: userId,
+        role,
+      });
       return teamMember;
     } catch (error) {
       throw error;
@@ -66,7 +76,7 @@ class TeamService {
         where: { TeamId: teamId, UserId: userId },
       });
       if (!teamMember) {
-        throw new Error('Team member not found');
+        throw new Error("Team member not found");
       }
       await teamMember.destroy();
     } catch (error) {
@@ -74,6 +84,5 @@ class TeamService {
     }
   }
 }
-
 
 export default new TeamService();

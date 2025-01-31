@@ -10,7 +10,7 @@ import router from "./src/routes/index.js";
 import errorMiddleware from "./src/middlewares/error.middleware.js";
 import sequelize from "./src/database/db.js";
 const app = express();
-
+app.set("trust proxy", 1);
 app.use(cors({ credentials: true, origin: process.env.CLIENT_URL }));
 app.use(helmet());
 app.use(compression());
@@ -18,6 +18,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan("combined"));
+app.use((req, res, next) => {
+  console.log(
+    "Method : ",
+    req.method,
+    "Endpoint : ",
+    req.url,
+    "body : ",
+    req.body
+  );
+  next();
+});
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
