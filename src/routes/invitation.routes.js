@@ -1,19 +1,30 @@
-
 import express from "express";
 import {
   sendInvitation,
   getInvitations,
-  respondInvitation
-} from "../controllers/invitation.controller";
+  respondInvitation,
+} from "../controllers/invitation.controller.js";
 
-const authMiddleware = require("../middlewares/auth.middleware");
-const validate = require("../middlewares/validate.middleware");
-const { invitationValidation, respondInvitationValidation } = require("../validations/invitation.validation");
-
+import authMiddleware from "../middlewares/auth.middleware.js";
+import validate from "../middlewares/validate.middleware.js";
+import {
+  invitationValidation,
+  respondInvitationValidation,
+} from "../validations/invitation.validation.js";
 const router = express.Router();
 
-router.post("/", authMiddleware, validate(invitationValidation), sendInvitation);
+router.post(
+  "/",
+  authMiddleware,
+  validate(invitationValidation),
+  sendInvitation
+);
 router.get("/", authMiddleware, getInvitations);
-router.post("/:id/respond", authMiddleware, validate(respondInvitationValidation), respondInvitation);
+router.post(
+  "/:id/respond",
+  authMiddleware,
+  validate(respondInvitationValidation),
+  respondInvitation
+);
 
-
+export default router;
