@@ -43,4 +43,6 @@ app.get("/", (req, res) => {
   res.status(200).json({ message: "Task Management API is running 🚀" });
 });
 
-export default app;
+app.listen(process.env.PORT, () => {
+  console.log(`🚀 Server is running on port ${process.env.PORT}`);
+});
