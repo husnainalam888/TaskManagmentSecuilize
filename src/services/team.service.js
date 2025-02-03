@@ -3,22 +3,32 @@ import User from "../models/user.model.js";
 import TeamMember from "../models/teamMember.model.js";
 
 class TeamService {
-  async createTeam({ name, description }) {
+  async createTeam({ name, description }, adminId) {
     try {
-      const team = await Team.create({ name, description });
+      console.log("TeamService createTeam :", { name, description, adminId });
+      const team = await Team.create({ name, description, adminId });
       return team;
     } catch (error) {
       throw error;
     }
   }
 
-  async getTeams() {
+  async getTeams(userId) {
     try {
       const teams = await Team.findAll({
         include: [
           {
             model: User,
-            through: TeamMember,
+            as: "admin",
+            attributes: ["id", "name", "email"],
+          },
+          {
+            model: User,
+            as: "members",
+            through: {
+              attributes: ["role"],
+            },
+            attributes: ["id", "name", "email"],
           },
         ],
       });
@@ -30,7 +40,23 @@ class TeamService {
 
   async getTeamById(id) {
     try {
-      const team = await Team.findByPk(id);
+      const team = await Team.findByPk(id, {
+        include: [
+          {
+            model: User,
+            as: "admin",
+            attributes: ["id", "name", "email"],
+          },
+          {
+            model: User,
+            as: "members",
+            through: {
+              attributes: ["role"],
+            },
+            attributes: ["id", "name", "email"],
+          },
+        ],
+      });
       if (!team) {
         throw new Error("Team not found");
       }
@@ -70,15 +96,45 @@ class TeamService {
     }
   }
 
-  async removeMember(teamId, userId) {
+  async removeMember(teamId, userId, adminId) {
     try {
       const teamMember = await TeamMember.findOne({
-        where: { TeamId: teamId, UserId: userId },
+        where: { TeamId: teamId, UserId: userId, adminId: userId },
       });
       if (!teamMember) {
         throw new Error("Team member not found");
       }
       await teamMember.destroy();
+    } catch (error) {
+      throw error;
+    }
+  }
+  async getMyTeams(userId) {
+    try {
+      const team = await Team.findAll({
+        where: {
+          adminId: userId,
+        },
+        include: [
+          {
+            model: User,
+            as: "admin",
+            attributes: ["id", "name", "email"],
+          },
+          {
+            model: User,
+            as: "members",
+            through: {
+              attributes: ["role"],
+            },
+            attributes: ["id", "name", "email"],
+          },
+        ],
+      });
+      if (!team) {
+        throw new Error("Team not found");
+      }
+      return team;
     } catch (error) {
       throw error;
     }

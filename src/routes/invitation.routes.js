@@ -5,12 +5,12 @@ import {
   respondInvitation,
 } from "../controllers/invitation.controller.js";
 
-import authMiddleware from "../middlewares/auth.middleware.js";
-import validate from "../middlewares/validate.middleware.js";
+import authMiddleware from "../middlewares/authentication/auth.middleware.js";
+import validate from "../middlewares/validations/validate.middleware.js";
 import {
   invitationValidation,
   respondInvitationValidation,
-} from "../validations/invitation.validation.js";
+} from "../middlewares/validations/invitation.validation.js";
 const router = express.Router();
 
 router.post(
@@ -20,7 +20,7 @@ router.post(
   sendInvitation
 );
 router.get("/", authMiddleware, getInvitations);
-router.post(
+router.put(
   "/:id/respond",
   authMiddleware,
   validate(respondInvitationValidation),

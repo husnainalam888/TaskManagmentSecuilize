@@ -1,25 +1,31 @@
-import Invitation from '../models/invitation.model.js';
-import Team from '../models/team.model.js';
-import TeamMember from '../models/teamMember.model.js';
-import User from '../models/user.model.js';
+import Invitation from "../models/invitation.model.js";
+import Team from "../models/team.model.js";
+import TeamMember from "../models/teamMember.model.js";
+import User from "../models/user.model.js";
 
 class InvitationService {
-  async sendInvitation(email, teamId) {
+  async sendInvitation({ receiverId, teamId, inviterId }) {
     try {
       const team = await Team.findByPk(teamId);
       if (!team) {
-        throw new Error('Team not found');
+        throw new Error("Team not found");
       }
 
       const existingInvitation = await Invitation.findOne({
-        where: { email, TeamId: teamId },
+        where: { receiverId, teamId, inviterId },
       });
 
       if (existingInvitation) {
-        throw new Error('Invitation already sent to this email for this team');
+        throw new Error(
+          "Invitation already sent to this receiverId for this team"
+        );
       }
 
-      const invitation = await Invitation.create({ email, TeamId: teamId });
+      const invitation = await Invitation.create({
+        receiverId,
+        teamId,
+        inviterId,
+      });
       return invitation;
     } catch (error) {
       throw error;
@@ -30,16 +36,24 @@ class InvitationService {
     try {
       const user = await User.findByPk(userId);
       if (!user) {
-        throw new Error('User not found');
+        throw new Error("User not found");
       }
 
       const invitations = await Invitation.findAll({
         include: [
           {
             model: Team,
+            as: "team",
+          },
+          {
+            model: User,
+            as: "inviter",
+          },
+          {
+            model: User,
+            as: "receiver",
           },
         ],
-        where: { email: user.email },
       });
       return invitations;
     } catch (error) {
@@ -51,25 +65,28 @@ class InvitationService {
     try {
       const user = await User.findByPk(userId);
       if (!user) {
-        throw new Error('User not found');
+        throw new Error("User not found");
       }
-      const invitation = await Invitation.findByPk(invitationId);
+      let invitation = await Invitation.findByPk(invitationId);
 
       if (!invitation) {
-        throw new Error('Invitation not found');
+        throw new Error("Invitation not found");
+      }
+      console.log(
+        "invitation",
+        invitation.receiverId,
+        userId,
+        invitation.receiverId == userId
+      );
+      if (invitation.receiverId !== userId) {
+        throw new Error("You are not authorized to respond to this invitation");
       }
 
-      if (invitation.email !== user.email) {
-        throw new Error(
-          'You are not authorized to respond to this invitation'
-        );
-      }
-
-      if (status === 'ACCEPTED') {
+      if (status === "ACCEPTED") {
         await TeamMember.create({
-          UserId: userId,
-          TeamId: invitation.TeamId,
-          role: 'MEMBER',
+          userId: userId,
+          teamId: invitation.teamId,
+          role: "MEMBER",
         });
       }
 
@@ -82,5 +99,4 @@ class InvitationService {
   }
 }
 
-
-export default new InvitationService
+export default new InvitationService();

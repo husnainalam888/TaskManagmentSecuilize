@@ -6,19 +6,21 @@ import {
   deleteTeam,
   addMember,
   removeMember,
+  getMyTeams,
 } from "../controllers/team.controller.js";
 
-import authMiddleware from "../middlewares/auth.middleware.js";
-import validate from "../middlewares/validate.middleware.js";
+import authMiddleware from "../middlewares/authentication/auth.middleware.js";
+import validate from "../middlewares/validations/validate.middleware.js";
 import {
   teamValidation,
   addMemberValidation,
-} from "../validations/team.validation.js";
+} from "../middlewares/validations/team.validation.js";
 
 const router = express.Router();
 
 router.post("/", authMiddleware, validate(teamValidation), createTeam);
 router.get("/", authMiddleware, getTeams);
+router.get("/me", authMiddleware, getMyTeams);
 router.get("/:id", authMiddleware, getTeamById);
 router.delete("/:id", authMiddleware, deleteTeam);
 router.post(

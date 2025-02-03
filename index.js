@@ -7,8 +7,8 @@ import morgan from "morgan";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import router from "./src/routes/index.js";
-import errorMiddleware from "./src/middlewares/error.middleware.js";
-import sequelize from "./src/database/db.js";
+import errorMiddleware from "./src/middlewares/errorHandling/error.middleware.js";
+import sequelize, { setupAssociations } from "./src/database/db.js";
 const app = express();
 app.set("trust proxy", 1);
 app.use(cors({ credentials: true, origin: process.env.CLIENT_URL }));
@@ -45,7 +45,8 @@ sequelize
   .authenticate()
   .then(() => {
     console.log("✅ Database connected successfully.");
-    return sequelize.sync({ alter: true });
+    setupAssociations();
+    sequelize.sync({ alter: true });
   })
   .then(() => console.log("✅ Database synced."))
   .catch((err) => console.error("❌ Database connection failed:", err));

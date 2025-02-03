@@ -1,43 +1,16 @@
-version: '3.8'
+version: "3.4"
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: task-management-app
-    container_name: task-management-app
-    working_dir: /app
-    volumes:
-      - .:/app
+  postgres:
+    container_name: learning-sequilize-postgres
+    image: postgres
     ports:
-      - "3000:3000"
-    restart: always
-    depends_on:
-      - db
-    links:
-      - db
-    environment:
-      DATABASE_URL: postgres://postgres:postgres@db:5432/task_management
-      DB_HOST: db
-      DB_NAME: task_management
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      JWT_SECRET: your_jwt_secret
-      CLIENT_URL: http://localhost:3001
-    command: npm start
-  db:
-    image: postgres:latest
-    container_name: task-management-db
-    restart: always
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: task_management
-    ports:
-      - "5432:5432"
-    volumes:
-      - db_data:/var/lib/postgresql/data
-
+      POSTGRES_DB: tast_management_db
 volumes:
-  db_data:
+  postgres_data:

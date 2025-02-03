@@ -1,15 +1,18 @@
-import sequelize from "../database/db.js";
+import sequelize, { setupAssociations } from "../database/db.js";
 import User from "./user.model.js";
 import Team from "./team.model.js";
+import Permission from "./permission.model.js";
+import Role from "./role.model.js";
 import TeamMember from "./teamMember.model.js";
-import Invitation from "./invitation.model.js";
 import Task from "./task.model.js";
-
-export default {
+import TeamInvitation from "./invitation.model.js";
+export {
   sequelize,
   User,
-  Team,
   TeamMember,
-  Invitation,
+  TeamInvitation,
   Task,
-}
+  Team,
+  Role,
+  Permission,
+};

@@ -1,7 +1,7 @@
-import { DataTypes } from "sequelize";
 import sequelize from "../database/db.js";
-import User from "./user.model.js";
-import Team from "./team.model.js";
+import { Role } from "./index.js";
+import { DataTypes } from "sequelize";
+import { User, Team } from "./index.js";
 
 const TeamMember = sequelize.define(
   "TeamMember",
@@ -11,16 +11,16 @@ const TeamMember = sequelize.define(
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    role: {
-      type: DataTypes.ENUM("OWNER", "ADMIN", "MEMBER"),
+    teamId: {
+      type: DataTypes.UUID,
       allowNull: false,
-      defaultValue: "MEMBER",
+    },
+    userId: {
+      type: DataTypes.UUID,
+      allowNull: false,
     },
   },
   { timestamps: true }
 );
-
-User.belongsToMany(Team, { through: TeamMember });
-Team.belongsToMany(User, { through: TeamMember });
 
 export default TeamMember;

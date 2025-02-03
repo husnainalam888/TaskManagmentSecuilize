@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon --es-module-specifier-resolution=node index.js",
-    "start": "node --es-module-specifier-resolution=node index.js"
+    "start": "npx nodemon index.js"
   },
   "author": "Google LLC",
   "license": "Apache-2.0",

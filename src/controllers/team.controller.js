@@ -2,7 +2,8 @@ import teamService from "../services/team.service.js";
 
 export const createTeam = async (req, res) => {
   try {
-    const team = await teamService.createTeam(req.body);
+    const userId = req.user.id;
+    const team = await teamService.createTeam(req.body, userId);
     res.status(201).json({ message: "Team created successfully", team });
   } catch (error) {
     res.status(error.statusCode || 500).json({ message: error.message });
@@ -12,6 +13,16 @@ export const createTeam = async (req, res) => {
 export const getTeams = async (req, res) => {
   try {
     const teams = await teamService.getTeams();
+    res.json(teams);
+  } catch (error) {
+    res.status(error.statusCode || 500).json({ message: error.message });
+  }
+};
+
+export const getMyTeams = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const teams = await teamService.getMyTeams(userId);
     res.json(teams);
   } catch (error) {
     res.status(error.statusCode || 500).json({ message: error.message });
@@ -55,7 +66,8 @@ export const addMember = async (req, res) => {
 export const removeMember = async (req, res) => {
   try {
     const { id, userId } = req.params;
-    await teamService.removeMember(id, userId);
+    const adminId = req.user.id;
+    await teamService.removeMember(id, userId, adminId);
     res.json({ message: "Member removed successfully" });
   } catch (error) {
     res.status(error.statusCode || 500).json({ message: error.message });

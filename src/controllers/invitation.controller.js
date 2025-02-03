@@ -1,13 +1,21 @@
-import * as invitationService from '../services/invitation.service.js';
+import invitationService from "../services/invitation.service.js";
 
 const sendInvitation = async (req, res) => {
   try {
-    const invitation = await invitationService.sendInvitation(req.body.email, req.body.teamId);
-    res.status(201).json({ message: 'Invitation sent successfully', invitation });
+    const inviterId = req.user.id;
+    const { receiverId, teamId } = req.body;
+    const invitation = await invitationService.sendInvitation({
+      receiverId,
+      teamId,
+      inviterId,
+    });
+    res
+      .status(201)
+      .json({ message: "Invitation sent successfully", invitation });
   } catch (error) {
     res.status(error.statusCode || 500).json({ message: error.message });
   }
-};  
+};
 
 const getInvitations = async (req, res) => {
   try {
@@ -16,18 +24,25 @@ const getInvitations = async (req, res) => {
     res.json(invitations);
   } catch (error) {
     res.status(error.statusCode || 500).json({ message: error.message });
-  }  
-};  
+  }
+};
 
 const respondInvitation = async (req, res) => {
   try {
-    const { id } = req.params
+    const { id } = req.params;
     const userId = req.user.id;
-    const invitation = await invitationService.respondInvitation(id, userId, req.body.status);
-    res.json({ message: `Invitation ${req.body.status.toLowerCase()}`, invitation });
+    const invitation = await invitationService.respondInvitation(
+      id,
+      userId,
+      req.body.status
+    );
+    res.json({
+      message: `Invitation ${req.body.status.toLowerCase()}`,
+      invitation,
+    });
   } catch (error) {
-    res.status(error.statusCode || 500).json({ message: error.message });  
-  }  
+    res.status(error.statusCode || 500).json({ message: error.message });
+  }
 };
 
 export { sendInvitation, getInvitations, respondInvitation };

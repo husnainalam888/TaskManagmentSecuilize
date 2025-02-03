@@ -1,8 +1,8 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../database/db.js';
-
+import { Task, TeamInvitation, TeamMember, User } from "./index.js";
+import sequelize from "../database/db.js";
+import { DataTypes } from "sequelize";
 const Team = sequelize.define(
-  'Team',
+  "Team",
   {
     id: {
       type: DataTypes.UUID,
@@ -15,6 +15,10 @@ const Team = sequelize.define(
     },
     description: {
       type: DataTypes.TEXT,
+    },
+    adminId: {
+      type: DataTypes.UUID,
+      allowNull: false,
     },
   },
   { timestamps: true }

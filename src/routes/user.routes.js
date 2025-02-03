@@ -1,8 +1,8 @@
 import express from "express";
 import { getProfile, updateProfile } from "../controllers/user.controller.js";
-import authMiddleware from "../middlewares/auth.middleware.js";
-import validate from "../middlewares/validate.middleware.js";
-import { updateProfileValidation } from "../validations/user.validation.js";
+import authMiddleware from "../middlewares/authentication/auth.middleware.js";
+import validate from "../middlewares/validations/validate.middleware.js";
+import { updateProfileValidation } from "../middlewares/validations/user.validation.js";
 
 const router = express.Router();
 

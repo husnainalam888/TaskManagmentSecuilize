@@ -1,37 +1,42 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../database/db.js';
-import User from './user.model.js';
-import Team from './team.model.js';
+import sequelize from "../database/db.js";
+import { DataTypes } from "sequelize";
+import { Team, User } from "./index.js";
 
-const Task = sequelize.define(
-  'Task',
-  {
-    id: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      primaryKey: true,
-    },
-    title: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    description: {
-      type: DataTypes.TEXT,
-    },
-    status: {
-      type: DataTypes.ENUM('TODO', 'IN_PROGRESS', 'DONE'),
-      allowNull: false,
-      defaultValue: 'TODO',
-    },
-    priority: {
-      type: DataTypes.ENUM('LOW', 'MEDIUM', 'HIGH'),
-      allowNull: false,
-      defaultValue: 'MEDIUM',
-    },
+const Task = sequelize.define("Task", {
+  id: {
+    type: DataTypes.UUID,
+    defaultValue: DataTypes.UUIDV4,
+    primaryKey: true,
   },
-  { timestamps: true },
-);
+  title: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  description: {
+    type: DataTypes.TEXT,
+  },
+  status: {
+    type: DataTypes.ENUM("TODO", "IN_PROGRESS", "DONE"),
+    allowNull: false,
+    defaultValue: "TODO",
+  },
+  priority: {
+    type: DataTypes.ENUM("LOW", "MEDIUM", "HIGH"),
+    allowNull: false,
+    defaultValue: "MEDIUM",
+  },
+  assignedToUserId: {
+    type: DataTypes.UUID,
+    allowNull: true,
+  },
+  assignedToTeamId: {
+    type: DataTypes.UUID,
+    allowNull: true,
+  },
+  createdById: {
+    type: DataTypes.UUID,
+    allowNull: false,
+  },
+});
 
-Task.belongsTo(User, { as: 'assignedTo' });
-Task.belongsTo(Team);
 export default Task;
