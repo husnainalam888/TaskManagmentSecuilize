@@ -177,6 +177,15 @@ class TaskService {
       throw error;
     }
   }
+
+  async getStats() {
+    try {
+      const stats = await Task.findAll({});
+      return stats;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default new TaskService();

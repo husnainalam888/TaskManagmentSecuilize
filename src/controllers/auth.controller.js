@@ -24,4 +24,18 @@ const login = async (req, res) => {
   }
 };
 
-export { register, login };
+const getStats = async (req, res) => {
+  try {
+    const stats = await authService.getStats();
+    res.json({
+      status: true,
+      data: {
+        totalUsers: stats?.length || 0,
+      },
+    });
+  } catch (error) {
+    res.status(error.statusCode || 500).json({ message: error.message });
+  }
+};
+
+export { register, login, getStats };

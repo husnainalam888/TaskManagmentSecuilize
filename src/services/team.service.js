@@ -1,6 +1,9 @@
 import Team from "../models/team.model.js";
 import User from "../models/user.model.js";
 import TeamMember from "../models/teamMember.model.js";
+import Role from "../models/role.model.js";
+import Permission from "../models/permission.model.js";
+import { Sequelize } from "sequelize";
 
 class TeamService {
   async createTeam({ name, description }, adminId) {
@@ -16,6 +19,9 @@ class TeamService {
   async getTeams(userId) {
     try {
       const teams = await Team.findAll({
+        where: {
+          adminId: userId,
+        },
         include: [
           {
             model: User,
@@ -25,13 +31,38 @@ class TeamService {
           {
             model: User,
             as: "members",
-            through: {
-              attributes: ["role"],
-            },
             attributes: ["id", "name", "email"],
+            through: { attributes: [] },
+            include: [
+              {
+                model: TeamMember,
+                as: "membership",
+                attributes: ["roleId"],
+                where: {
+                  teamId: { [Sequelize.Op.col]: "Team.id" },
+                },
+                required: false,
+                include: [
+                  {
+                    model: Role,
+                    as: "role",
+                    attributes: ["name"],
+                    include: [
+                      {
+                        model: Permission,
+                        as: "permissions",
+                        attributes: ["id", "name"],
+                        through: { attributes: [] },
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
           },
         ],
       });
+
       return teams;
     } catch (error) {
       throw error;
@@ -135,6 +166,17 @@ class TeamService {
         throw new Error("Team not found");
       }
       return team;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getTeamsStats() {
+    try {
+      const stats = await Team.findAll({
+        attributes: ["name"],
+      });
+      return stats;
     } catch (error) {
       throw error;
     }

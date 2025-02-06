@@ -12,7 +12,8 @@ export const createTeam = async (req, res) => {
 
 export const getTeams = async (req, res) => {
   try {
-    const teams = await teamService.getTeams();
+    const userId = req.user.id;
+    const teams = await teamService.getTeams(userId);
     res.json(teams);
   } catch (error) {
     res.status(error.statusCode || 500).json({ message: error.message });
@@ -69,6 +70,20 @@ export const removeMember = async (req, res) => {
     const adminId = req.user.id;
     await teamService.removeMember(id, userId, adminId);
     res.json({ message: "Member removed successfully" });
+  } catch (error) {
+    res.status(error.statusCode || 500).json({ message: error.message });
+  }
+};
+
+export const getTeamsStats = async (req, res) => {
+  try {
+    const stats = await teamService.getTeamsStats();
+    res.json({
+      status: true,
+      data: {
+        totalTeams: stats?.length || 0,
+      },
+    });
   } catch (error) {
     res.status(error.statusCode || 500).json({ message: error.message });
   }

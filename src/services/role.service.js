@@ -1,4 +1,7 @@
-import { Role } from "../models/index.js";
+import { PERMISSIONS } from "../constants/permissions.js";
+import { ROLES } from "../constants/roles.js";
+import { Permission, Role } from "../models/index.js";
+import PermissionService from "./permission.service.js";
 
 const RoleService = {
   async getAllRoles() {
@@ -25,6 +28,14 @@ const RoleService = {
     if (!role) return null;
     await role.destroy();
     return true;
+  },
+  async assignDefaultRoleToUser(teamId, userId) {
+    const [memberRole, created] = await Role.findOrCreate({
+      where: { name: ROLES.MEMBER },
+    });
+    const permissions = await PermissionService.getDefaultMemberPermissions();
+    await memberRole.addPermissions(permissions);
+    return memberRole.id;
   },
 };
 

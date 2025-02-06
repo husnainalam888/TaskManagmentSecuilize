@@ -1,0 +1,15 @@
+export const PERMISSIONS = {
+  VIEW_TASKS: "view_tasks",
+  COMMENT_ON_TASKS: "comment_on_tasks",
+  CREATE_TASKS: "create_tasks",
+  EDIT_TASKS: "edit_tasks",
+  DELETE_TASKS: "delete_tasks",
+  ASSIGN_TASKS: "assign_tasks",
+  VIEW_TEAM: "view_team",
+  CREATE_TEAM: "create_team",
+  EDIT_TEAM: "edit_team",
+  DELETE_TEAM: "delete_team",
+  ADD_TEAM_MEMBERS: "add_team_members",
+  REMOVE_TEAM_MEMBERS: "remove_team_members",
+  CREATE_INVITATIONS: "create_invitations",
+};

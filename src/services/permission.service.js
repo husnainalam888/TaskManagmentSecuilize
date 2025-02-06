@@ -1,3 +1,4 @@
+import { PERMISSIONS } from "../constants/permissions.js";
 import { Permission } from "../models/index.js";
 
 const PermissionService = {
@@ -25,6 +26,25 @@ const PermissionService = {
     if (!permission) return null;
     await permission.destroy();
     return true;
+  },
+
+  async getDefaultMemberPermissions() {
+    let permissions = await Permission.findAll({
+      where: { name: [PERMISSIONS.VIEW_TASKS, PERMISSIONS.COMMENT_ON_TASKS] },
+    });
+
+    if (permissions.length !== 2) {
+      permissions = await Permission.bulkCreate(
+        [
+          { name: PERMISSIONS.VIEW_TASKS },
+          { name: PERMISSIONS.COMMENT_ON_TASKS },
+        ],
+        {
+          ignoreDuplicates: true,
+        }
+      );
+    }
+    return permissions;
   },
 };
 

@@ -1,4 +1,4 @@
-import sequelize, { setupAssociations } from "../database/db.js";
+import sequelize from "../database/db.js";
 import User from "./user.model.js";
 import Team from "./team.model.js";
 import Permission from "./permission.model.js";
@@ -6,6 +6,10 @@ import Role from "./role.model.js";
 import TeamMember from "./teamMember.model.js";
 import Task from "./task.model.js";
 import TeamInvitation from "./invitation.model.js";
+import App from "./app.model.js";
+import Developer from "./developer.model.js";
+import AppCredential from "./appCrediential.model.js";
+
 export {
   sequelize,
   User,
@@ -15,4 +19,7 @@ export {
   Team,
   Role,
   Permission,
+  App,
+  Developer,
+  AppCredential,
 };

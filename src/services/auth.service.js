@@ -35,6 +35,16 @@ class AuthService {
       throw error;
     }
   }
+
+  async getStats() {
+    try {
+      const stats = await User.findAll();
+
+      return stats;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export const authService = new AuthService();

@@ -19,8 +19,20 @@ const TeamMember = sequelize.define(
       type: DataTypes.UUID,
       allowNull: false,
     },
+    roleId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    indexes: [
+      {
+        unique: true,
+        fields: ["teamId", "userId", "roleId"], // Composite index to enforce uniqueness
+      },
+    ],
+  }
 );
 
 export default TeamMember;

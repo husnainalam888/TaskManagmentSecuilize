@@ -81,3 +81,16 @@ export const assignToUser = async (req, res) => {
     res.status(error.statusCode || 500).json({ message: error.message });
   }
 };
+
+export const getStats = async (req, res) => {
+  try {
+    const stats = await taskService.getStats();
+    res.json({
+      stats: {
+        totalTasks: stats.length,
+      },
+    });
+  } catch (error) {
+    res.status(error.statusCode || 500).json({ message: error.message });
+  }
+};

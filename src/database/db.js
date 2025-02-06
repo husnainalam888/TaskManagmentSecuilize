@@ -8,6 +8,9 @@ import {
   TeamInvitation,
   TeamMember,
   User,
+  App,
+  AppCredential,
+  Developer,
 } from "../models/index.js";
 
 dotenv.config();
@@ -18,6 +21,14 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
 });
 
 export const setupAssociations = () => {
+  // Developer - Apps
+  Developer.hasMany(App, { foreignKey: "developerId", as: "apps" });
+  App.belongsTo(Developer, { foreignKey: "developerId", as: "developer" });
+
+  // App - AppCredentials
+  App.hasOne(AppCredential, { foreignKey: "appId", as: "credentials" });
+  AppCredential.belongsTo(App, { foreignKey: "appId", as: "app" });
+
   // user realtions
   User.hasMany(TeamInvitation, { foreignKey: "inviterId", as: "invitations" });
   User.hasMany(TeamInvitation, {
@@ -31,15 +42,19 @@ export const setupAssociations = () => {
     foreignKey: "userId",
     as: "myTeams",
   });
+  User.hasMany(TeamMember, { foreignKey: "userId", as: "membership" });
+
   // team member relations
   TeamMember.belongsTo(User, { foreignKey: "userId", as: "user" });
   TeamMember.belongsTo(Team, { foreignKey: "teamId", as: "team" });
+  TeamMember.belongsTo(Role, { foreignKey: "roleId", as: "role" });
   // team realations
   Team.hasMany(TeamInvitation, { foreignKey: "teamId", as: "invitations" });
   Team.hasMany(Task, { foreignKey: "assignedToTeamId", as: "assignedTasks" });
   Team.belongsTo(User, { foreignKey: "adminId", as: "admin" });
   Team.belongsToMany(User, {
     through: TeamMember,
+    foreignKey: "teamId",
     as: "members",
   });
   // team invitation relations
@@ -58,13 +73,14 @@ export const setupAssociations = () => {
   // permission relations
   Permission.belongsToMany(Role, {
     through: "RolePermissions",
+    as: "roles",
   });
   // role relations
   Role.belongsToMany(Permission, {
     through: "RolePermissions",
+    as: "permissions",
   });
-  Role.hasMany(TeamMember);
-  TeamMember.belongsTo(Role);
+  Role.hasMany(TeamMember, { foreignKey: "roleId", as: "members" });
 };
 
 export default sequelize;

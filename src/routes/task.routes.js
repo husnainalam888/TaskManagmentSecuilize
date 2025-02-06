@@ -8,6 +8,7 @@ import {
   assignToUser,
   getCreatedTask,
   getAssignedTask,
+  getStats,
 } from "../controllers/task.controller.js";
 
 import authMiddleware from "../middlewares/authentication/auth.middleware.js";
@@ -18,13 +19,28 @@ import {
   updateTaskValidation,
 } from "../middlewares/validations/task.validation.js";
 import { taskOwnershipMiddleware } from "../middlewares/authorization/task.ownership.middleware.js";
+import { authorize } from "../middlewares/authorization/authorize.middleware.js";
+import { PERMISSIONS } from "../constants/permissions.js";
+import authenticateApp from "../middlewares/authentication/auth.app.middleware.js";
 const router = express.Router();
 
-router.post("/", authMiddleware, validate(taskValidation), createTask);
+router.get("/getStats", authenticateApp, getStats);
+router.post(
+  "/",
+  authMiddleware,
+  authorize(PERMISSIONS.CREATE_TASKS),
+  validate(taskValidation),
+  createTask
+);
 router.get("/", authMiddleware, getTasks);
 router.get("/created", authMiddleware, getCreatedTask);
 router.get("/assigned", authMiddleware, getAssignedTask);
-router.get("/:id", authMiddleware, getTaskById);
+router.get(
+  "/:teamId/:id",
+  authorize(PERMISSIONS.VIEW_TASKS),
+  authMiddleware,
+  getTaskById
+);
 router.put(
   "/assign",
   authMiddleware,
@@ -35,10 +51,17 @@ router.put(
 router.put(
   "/:id",
   authMiddleware,
+  authorize(PERMISSIONS.EDIT_TASKS),
   taskOwnershipMiddleware,
   validate(updateTaskValidation),
   updateTask
 );
-router.delete("/:id", authMiddleware, taskOwnershipMiddleware, deleteTask);
+router.delete(
+  "/:id",
+  authMiddleware,
+  authorize(PERMISSIONS.DELETE_TASKS),
+  taskOwnershipMiddleware,
+  deleteTask
+);
 
 export default router;

@@ -6,6 +6,8 @@ import taskRoutes from "./task.routes.js";
 import invitationRoutes from "./invitation.routes.js";
 import roleRoutes from "./role.routes.js";
 import permissionRoutes from "./permission.routes.js";
+import teamMemberRoutes from "./teamMember.routes.js";
+import developerRoutes from "./developer.routes.js";
 const router = express.Router();
 router.use("/auth", authRoutes);
 router.use("/users", userRoutes);
@@ -14,5 +16,7 @@ router.use("/invitations", invitationRoutes);
 router.use("/tasks", taskRoutes);
 router.use("/roles", roleRoutes);
 router.use("/permissions", permissionRoutes);
+router.use("/team-members", teamMemberRoutes);
+router.use("/developers", developerRoutes);
 
 export default router;

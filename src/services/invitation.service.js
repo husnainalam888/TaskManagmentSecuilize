@@ -1,8 +1,14 @@
+import { DataTypes } from "sequelize";
+import { PERMISSIONS } from "../constants/permissions.js";
 import Invitation from "../models/invitation.model.js";
+import Permission from "../models/permission.model.js";
+import Role from "../models/role.model.js";
 import Team from "../models/team.model.js";
 import TeamMember from "../models/teamMember.model.js";
 import User from "../models/user.model.js";
-
+import RoleService from "./role.service.js";
+import TeamMemberService from "./teamMember.service.js";
+const TAG = "InvitationService";
 class InvitationService {
   async sendInvitation({ receiverId, teamId, inviterId }) {
     try {
@@ -83,13 +89,16 @@ class InvitationService {
       }
 
       if (status === "ACCEPTED") {
-        await TeamMember.create({
-          userId: userId,
-          teamId: invitation.teamId,
-          role: "MEMBER",
-        });
+        const roleId = await RoleService.assignDefaultRoleToUser(
+          invitation.teamId,
+          userId
+        );
+        await TeamMemberService.addMemberToTeam(
+          invitation.teamId,
+          userId,
+          roleId
+        );
       }
-
       invitation.status = status;
       await invitation.save();
       return invitation;
