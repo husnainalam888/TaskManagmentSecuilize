@@ -10,6 +10,9 @@ import {
   User,
   App,
   AppCredential,
+  Message,
+  Conversation,
+  ConversationParticipant,
   Developer,
 } from "../models/index.js";
 
@@ -21,6 +24,8 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
 });
 
 export const setupAssociations = () => {
+  
+
   // Developer - Apps
   Developer.hasMany(App, { foreignKey: "developerId", as: "apps" });
   App.belongsTo(Developer, { foreignKey: "developerId", as: "developer" });
@@ -79,6 +84,29 @@ export const setupAssociations = () => {
   Role.belongsToMany(Permission, {
     through: "RolePermissions",
     as: "permissions",
+  });
+
+
+  // Message Relations
+  Message.belongsTo(User, { foreignKey: "senderId", as: "sender" });
+  Message.belongsTo(User, { foreignKey: "receiverId", as: "receiver" });
+  Message.belongsTo(Conversation, {
+    foreignKey: "conversationId",
+    as: "conversation",
+  });
+  Conversation.hasMany(Message, {
+    foreignKey: "conversationId",
+    as: "messages",
+  });
+  Conversation.belongsToMany(User, {
+    through: ConversationParticipant,
+    foreignKey: "conversationId",
+    as: "participants",
+  });
+  User.belongsToMany(Conversation, {
+    through: ConversationParticipant,
+    foreignKey: "userId",
+    as: "conversations",
   });
   Role.hasMany(TeamMember, { foreignKey: "roleId", as: "members" });
 };

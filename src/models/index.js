@@ -9,6 +9,9 @@ import TeamInvitation from "./invitation.model.js";
 import App from "./app.model.js";
 import Developer from "./developer.model.js";
 import AppCredential from "./appCrediential.model.js";
+import Message from "./chat/message.model.js";
+import Conversation from "./chat/conversation.model.js";
+import ConversationParticipant from "./chat/conversationParticipant.model.js";
 
 export {
   sequelize,
@@ -22,4 +25,5 @@ export {
   App,
   Developer,
   AppCredential,
+  Message,Conversation,ConversationParticipant
 };
